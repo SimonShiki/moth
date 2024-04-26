@@ -40,7 +40,9 @@ enum Platform {
     Xueersi = 'xueersi',
     CreatiCode = 'creaticode',
     Adacraft = 'ada',
-    PenguinMod = 'pm'
+    PenguinMod = 'pm',
+    ElectraMod = 'electramod',
+    XPLab = 'xplab'
 }
 
 ```
