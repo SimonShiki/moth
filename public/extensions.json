@@ -94,5 +94,13 @@
             "description": "The SC block form of the Media Session API , allows SC works to basically use the browser Media Session ability.",
             "unsandboxed": true
         }
+    },
+    "Codefoxy": {
+        "cfupload":{
+            "name": "Upload",
+            "description": "Upload files to the Network, can also used with Files extension.",
+            "unsandboxed": true,
+            "compatible": ["sc", "tw"]
+        }
     }
 }
