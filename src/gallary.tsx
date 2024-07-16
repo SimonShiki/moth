@@ -32,7 +32,9 @@ enum Platform {
     Xueersi = 'xueersi',
     CreatiCode = 'creaticode',
     Adacraft = 'ada',
-    PenguinMod = 'pm'
+    PenguinMod = 'pm',
+    ElectraMod = 'electramod',
+    XPLab = 'xplab'
 }
 
 interface GallaryInfo {
@@ -68,7 +70,9 @@ const platformMap = {
     [Platform.Xueersi]: 'code.xueersi.com',
     [Platform.CreatiCode]: 'play.creaticode.com',
     [Platform.Adacraft]: 'www.adacraft.org',
-    [Platform.PenguinMod]: 'studio.penguinmod.com'
+    [Platform.PenguinMod]: 'studio.penguinmod.com',
+    [Platform.ElectraMod]: 'electramod.vercel.app',
+    [Platform.XPLab]: 'xplab.vercel.app'
 };
 
 function isUnavailable (info: GallaryInfo, clientInfo: ClientInfo | null) {

@@ -607,7 +607,7 @@
         if (variables[obj].type === 'list') {
         list.push({
             text: variables[obj].name,
-            value: variables[obj].name,
+            value: variables[obj].id,
         });
         }
       });
