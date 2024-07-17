@@ -30,21 +30,22 @@
             if (!this.canIUse()) { return }
             action = String(action)
             //console.log("actionHandlerMan",mode,action)
+            const setActionHandler = navigator.mediaSession.setActionHandler
             try {
                 switch (mode) {
                     case "reset":
-                        this.actions.forEach((item) => (navigator.mediaSession.setActionHandler(item, null)))
+                        this.actions.forEach((item) => (setActionHandler(item, null)))
                         this.actived_actionhandler = []
                         break;
                     case "on":
                         if (!this.actived_actionhandler.includes(action)) {
-                            navigator.mediaSession.setActionHandler(action, () => (Scratch.vm.runtime.startHats('40codeMediaSessApi_v1_actionhandler',{action:action})))
+                            setActionHandler(action, () => (Scratch.vm.runtime.startHats('40codeMediaSessApi_v1_actionhandler', { action: action })))
                             this.actived_actionhandler.push(action)
                         }
                         break;
                     case "off":
                         if (this.actived_actionhandler.includes(action)) {
-                            navigator.mediaSession.setActionHandler(action, null)
+                            setActionHandler(action, null)
                             this.actived_actionhandler = this.actived_actionhandler.filter((item) => !(item === action))
                         }
                         break;
@@ -84,7 +85,7 @@
                     "40code.MediaSessApi.v1.actionhandler.menus.seekbackward": "快退",
                     "40code.MediaSessApi.v1.actionhandler.menus.seekforward": "快进",
 
-                    "40code.MediaSessApi.v1.compatibility": "兼容性：使用播放无声音频的<audio>元素以显示 Media Session（重启作品失效）"
+                    "40code.MediaSessApi.v1.compatibility": "兼容性：使用播放无声音频的<audio>元素以显示 Media Session：[on_off]"
                 },
                 en: {
                     "40code.MediaSessApi.v1.canIUse": 'Is mediaSession available',
@@ -111,7 +112,7 @@
                     "40code.MediaSessApi.v1.actionhandler.menus.seekbackward": "Rewind",
                     "40code.MediaSessApi.v1.actionhandler.menus.seekforward": "Fast forward",
 
-                    "40code.MediaSessApi.v1.compatibility": "Compatibility: Use the <audio> element that plays silent audio to display the Media Session (invalid after restarting the work)"
+                    "40code.MediaSessApi.v1.compatibility": "Compatibility: Use the <audio> element that plays silent audio to display the Media Session: [on_off]"
                 },
             })
 
@@ -194,7 +195,7 @@
                                 type: Scratch.ArgumentType.STRING,
                                 menu: 'actions'
                             },
-                            on_off:{
+                            on_off: {
                                 type: Scratch.ArgumentType.STRING,
                                 menu: 'on_off'
                             }
@@ -209,11 +210,22 @@
                         blockType: Scratch.BlockType.EVENT,
                         opcode: 'v1_actionhandler',
                         text: Scratch.translate({ id: "40code.MediaSessApi.v1.actionhandler" }),
-                        isEdgeActivated: false, 
+                        isEdgeActivated: false,
                         arguments: {
                             action: {
                                 type: Scratch.ArgumentType.STRING,
                                 menu: 'actions'
+                            }
+                        }
+                    }, "---",
+                    {
+                        opcode: 'v1_compatibility',
+                        blockType: Scratch.BlockType.COMMAND,
+                        text: Scratch.translate({ id: "40code.MediaSessApi.v1.compatibility" }),
+                        arguments: {
+                            on_off: {
+                                type: Scratch.ArgumentType.STRING,
+                                menu: 'on_off'
                             }
                         }
                     }
@@ -237,7 +249,7 @@
                                 }))
                         ))()
                     },
-                    on_off:{
+                    on_off: {
                         acceptReporters: false,
                         items: [
                             { text: Scratch.translate({ id: "40code.MediaSessApi.v1.set_actionhandler.on" }), value: 'on' },
@@ -278,10 +290,35 @@
             return JSON.stringify(this.actived_actionhandler)
         }
         v1_set_actionhandler(args) {
-            this.actionHandlerMan(args.on_off,args.action)
+            this.actionHandlerMan(args.on_off, args.action)
         }
         v1_set_actionhandler_reset() {
             this.actionHandlerMan("reset")
+        }
+        compat_audioElement = null
+        v1_compatibility(args) {
+            switch (args.on_off) {
+                case "on":
+                    if (this.compat_audioElement != null) {
+                        break
+                    }
+                    this.compat_audioElement = document.createElement('audio');
+                    this.compat_audioElement.src = 'https://eureka.codingclip.cc/extensions/40codeTeam/pub/10sec_silent_audio.opus';
+                    this.compat_audioElement.loop = true;
+                    this.compat_audioElement.autoplay = true;
+                    document.body.appendChild(this.compat_audioElement);
+                    break;
+                case "off":
+                    if (this.compat_audioElement == null) {
+                        break;
+                    }
+                    this.compat_audioElement.pause();
+                    document.body.removeChild(this.compat_audioElement);
+                    this.compat_audioElement = null
+                    break;
+                default:
+                    break;
+            }
         }
     }
     Scratch.extensions.register(new MyExtension());
