@@ -30,7 +30,7 @@
             if (!this.canIUse()) { return }
             action = String(action)
             //console.log("actionHandlerMan",mode,action)
-            const setActionHandler = navigator.mediaSession.setActionHandler
+            const setActionHandler = (...args) => navigator.mediaSession.setActionHandler(...args);
             try {
                 switch (mode) {
                     case "reset":
