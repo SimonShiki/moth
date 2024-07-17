@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <button onclick="ww()">3232</button>
+    <button onclick="ww()">点击后等待10秒下载无声（空）音频</button>
     <script>
         //chatgpt
         function ww() {
@@ -17,7 +17,7 @@
             // 创建一个 MediaStreamAudioDestinationNode
             const streamDestination = audioContext.createMediaStreamDestination();
 
-            // 创建一个2秒长的无声音频缓冲区
+            // 创建一个10秒长的无声音频缓冲区
             const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 10, audioContext.sampleRate);
 
             // 使用无声（0值）填充缓冲区
