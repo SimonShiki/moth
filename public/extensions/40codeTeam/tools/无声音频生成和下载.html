@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>无声音频生成和下载</title>
+</head>
+
+<body>
+    <button onclick="ww()">3232</button>
+    <script>
+        //chatgpt
+        function ww() {
+            // 创建音频上下文
+            const audioContext = new AudioContext();
+
+            // 创建一个 MediaStreamAudioDestinationNode
+            const streamDestination = audioContext.createMediaStreamDestination();
+
+            // 创建一个2秒长的无声音频缓冲区
+            const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 10, audioContext.sampleRate);
+
+            // 使用无声（0值）填充缓冲区
+            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                const nowBuffering = buffer.getChannelData(channel);
+                for (let i = 0; i < buffer.length; i++) {
+                    nowBuffering[i] = 0; // 无声
+                }
+            }
+
+            // 创建一个源节点并连接到 MediaStreamAudioDestinationNode
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(streamDestination);
+            source.start();
+
+            // 使用MediaRecorder录制生成的音频流
+            const mediaRecorder = new MediaRecorder(streamDestination.stream, { mimeType: 'audio/webm; codecs=opus' });
+            let audioChunks = [];
+
+            mediaRecorder.ondataavailable = e => {
+                audioChunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/opus' });
+                const url = URL.createObjectURL(blob);
+
+                // 创建下载链接
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'silent_audio.opus';
+                document.body.appendChild(a);
+                a.click();
+
+                // 清理
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            };
+
+            // 开始录制，立即停止来生成无声文件
+            mediaRecorder.start();
+            setTimeout(() => {
+                mediaRecorder.stop();
+            }, 10000);  // 录制10秒长的无声音频
+        }
+
+    </script>
+</body>
+
+</html>

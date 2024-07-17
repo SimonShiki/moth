@@ -295,24 +295,26 @@
         v1_set_actionhandler_reset() {
             this.actionHandlerMan("reset")
         }
+        compat_audioElement = null
         v1_compatibility(args) {
             switch (args.on_off) {
                 case "on":
-                    // chatgpt
-                    const audioContext = new AudioContext();
-                    const gainNode = audioContext.createGain();
-                    gainNode.gain.value = 0.0001; // 设置很低的音量，以保持“静音”
-                    const oscillator = audioContext.createOscillator();
-                    oscillator.type = 'sine'; // 选择波形类型，例如'sine'（正弦波）
-                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime); // 设置频率
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    oscillator.start();
-                    const mediaStream = audioContext.createMediaStreamDestination();
-                    gainNode.connect(mediaStream);
+                    if (this.compat_audioElement != null) {
+                        break
+                    }
+                    this.compat_audioElement = document.createElement('audio');
+                    this.compat_audioElement.src = 'https://eureka.codingclip.cc/extensions/40codeTeam/pub/10sec_silent_audio.opus';
+                    this.compat_audioElement.loop = true;
+                    this.compat_audioElement.autoplay = true;
+                    document.body.appendChild(this.compat_audioElement);
                     break;
                 case "off":
-
+                    if (this.compat_audioElement == null) {
+                        break;
+                    }
+                    this.compat_audioElement.pause();
+                    document.body.removeChild(this.compat_audioElement);
+                    this.compat_audioElement = null
                     break;
                 default:
                     break;
